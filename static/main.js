@@ -33,7 +33,7 @@ controller.start()
 
 async function fetchLiveComments (user_id, options) {
     const { slice_id } = options
-    const comments_res = await fetch(`/api/comments?user_id=${user_id}&slice_id=${slice_id}`)
-    const comments_json = await comments_res.json()
-    return comments_json
+    const res = await fetch(`/api/comments?user_id=${user_id}&slice_id=${slice_id}`)
+    const json = await res.json()
+    return json
 }
