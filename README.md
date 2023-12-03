@@ -1,15 +1,15 @@
 # Flow
+
 ツイキャス用．某動画サイト風にコメントを流すことができます．
 
 ## Usage
 
 初めに `.env` の `CLIENT_ID` と `CLIENT_SECRET` を設定します．
-キーは https://twitcasting.tv/developer.php で取得できます．
-
+キーは <https://twitcasting.tv/developer.php> で取得できます．
 
 次のコマンドを実行すると localhost:8000 でコメントサーバーが起動します．
 
-```
+```shell
 deno task start
 ```
 
