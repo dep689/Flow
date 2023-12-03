@@ -1,3 +1,7 @@
+import { FlowModel } from "./FlowModel.js"
+import { FlowView } from "./FlowView.js"
+import { FlowController } from "./FlowController.js"
+
 const params = (new URL(window.location)).searchParams
 
 const canvas = document.getElementById("flow")

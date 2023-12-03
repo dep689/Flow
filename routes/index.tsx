@@ -11,11 +11,7 @@ export default function Home() {
 
       <canvas id="flow" height="720px" width="1280px" style="height: 360px; width: 640px;"></canvas>
 
-      <script src="/Comment.js"></script>
-      <script src="/FlowModel.js"></script>
-      <script src="/FlowView.js"></script>
-      <script src="/FlowController.js"></script>
-      <script src="/main.js"></script>
+      <script src="/main.js" type="module"></script>
     </>
   );
 }

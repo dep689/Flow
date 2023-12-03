@@ -1,4 +1,4 @@
-function FlowView(model, canvas) {
+export function FlowView(model, canvas) {
     const ctx = canvas.getContext("2d")
     const canvasheight = canvas.height
     const canvaswidth = canvas.width

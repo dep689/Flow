@@ -1,4 +1,4 @@
-function Comment(text) {
+export function Comment(text) {
     this.isdraw = true // 描画するか？
     this.ismounted = false // 描画されているか？
     this.life = undefined
