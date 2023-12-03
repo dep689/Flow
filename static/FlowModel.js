@@ -1,9 +1,13 @@
 import { Comment } from "./Comment.js"
 
-export function FlowModel() {
-    this.comments = []
+export class FlowModel {
+    /** @type {Comment[]} */
+    comments = []
 
-    this.pushcomment = function (text) {
+    /**
+     * @param {string} text 
+     */
+    pushcomment(text) {
         this.comments.push(new Comment(text))
     }
 }

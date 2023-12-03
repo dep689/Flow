@@ -1,72 +1,71 @@
-export function FlowView(model, canvas) {
-    const ctx = canvas.getContext("2d")
-    const canvasheight = canvas.height
-    const canvaswidth = canvas.width
-    const initial = canvas.dataset
-    const refleshtime = Math.max(Number(initial.refleshtime), 1000) || 1200 //ms
-    const maxwait = refleshtime
-    const charsize = Number(initial.charsize) || 48 //px
-    const margin = Number(initial.margin) || 8 //px
-    const maxtime = Number(initial.maxtime) || 6 //s
-    const lineheight = charsize + margin
-    const lines = Math.floor(canvasheight/lineheight)
-    const tails = Array(2*lines)
-    let stamp
+export class FlowView {
+    constructor(model, canvas) {
+        this.ctx = canvas.getContext("2d")
+        this.canvasheight = canvas.height
+        this.canvaswidth = canvas.width
+        const initial = canvas.dataset
+        const refleshtime = Math.max(Number(initial.refleshtime), 1000) || 1200 //ms
+        this.maxwait = refleshtime
+        this.charsize = Number(initial.charsize) || 48 //px
+        this.margin = Number(initial.margin) || 8 //px
+        this.maxtime = Number(initial.maxtime) || 6 //s
+        this.lineheight = this.charsize + this.margin
+        this.lines = Math.floor(this.canvasheight/this.lineheight)
+        this.tails = Array(2*this.lines)
+        this.model = model
+    }
 
-
-    this.start = function () {
-        cls()
-        stamp = Date.now()
-        requestAnimationFrame(draw)
+    start() {
+        this.cls()
+        this.stamp = Date.now()
+        this.draw()
     }
     
-    function cls() {
-        ctx.clearRect(0, 0, canvaswidth, canvasheight)
+    cls() {
+        this.ctx.clearRect(0, 0, this.canvaswidth, this.canvasheight)
     }
 
-    function selectline(comment) {
-        for(let line = 0; line < tails.length; line++) {
-            const tail = tails[line]
+    selectline(comment) {
+        for(let line = 0; line < this.tails.length; line++) {
+            const tail = this.tails[line]
             if (!tail) return line
             if (!tail.ismounted) return line
 
             const tailbottom = tail.x + tail.width
             // コメント全体が表示されていない場合はだめ
-            if (tailbottom > canvaswidth) continue
+            if (tailbottom > this.canvaswidth) continue
             // コメントが追いつかないときはOK
-            if (tailbottom/tail.speed < canvaswidth/comment.speed) {
+            if (tailbottom/tail.speed < this.canvaswidth/comment.speed) {
                 return line
             }
         }
         return undefined
     }
 
-    function setcontext(comment) {
-        ctx.fillStyle = comment.color
-        const size = (function(){
-            switch (comment.size) {
-                case "large": { return charsize + margin }
-                case "small": { return charsize/2}
-                default: { return charsize }
-            }
-        })()
-        ctx.font = `bold ${size}px sans-serif`
+    setcontext(comment) {
+        this.ctx.fillStyle = comment.color
+        const map = {
+            "large": this.charsize + this.margin,
+            "small": this.charsize/2
+        }
+        const size = map[comment.size] ?? this.charsize 
+        this.ctx.font = `bold ${size}px sans-serif`
     }
 
-    function measurecomment(comment) {
-        setcontext(comment)
-        return ctx.measureText(comment.text).width
+    measurecomment(comment) {
+        this.setcontext(comment)
+        return this.ctx.measureText(comment.text).width
     }
 
-    function mountcomment(comment) {
+    mountcomment(comment) {
         switch(comment.position) {
             case "naka": {
-                const life = maxtime*1000
-                const width = measurecomment(comment)
-                const speed = (canvaswidth + width)/life
+                const life = this.maxtime*1000
+                const width = this.measurecomment(comment)
+                const speed = (this.canvaswidth + width)/life
                 comment.width = width
                 comment.speed = speed
-                const line = selectline(comment)
+                const line = this.selectline(comment)
                 if (line === undefined) {
                     if (comment.wait === undefined) {
                         comment.pleasewait(maxwait)
@@ -74,51 +73,51 @@ export function FlowView(model, canvas) {
                     }
                     if (comment.wait < 0) comment.unmount()
                 }
-                const q = Math.floor(line/lines)
-                const r = line%lines
-                const x = canvaswidth
-                const offset = q*(charsize/2) + r*lineheight
-                const y = offset + charsize
+                const q = Math.floor(line/this.lines)
+                const r = line%this.lines
+                const x = this.canvaswidth
+                const offset = q*(this.charsize/2) + r*this.lineheight
+                const y = offset + this.charsize
                 comment.mount({ x, y, line, life, width, speed })
-                tails[line] = comment
+                this.tails[line] = comment
                 break
             }
         }
     }
 
-    function drawcomment(comment) {
-        ctx.strokeStyle = "black"
-        ctx.lineWidth = 6
-        ctx.strokeText(comment.text, comment.x, comment.y)
-        setcontext(comment)
-        ctx.fillText(comment.text, comment.x, comment.y)
+    drawcomment(comment) {
+        this.ctx.strokeStyle = "black"
+        this.ctx.lineWidth = 6
+        this.ctx.strokeText(comment.text, comment.x, comment.y)
+        this.setcontext(comment)
+        this.ctx.fillText(comment.text, comment.x, comment.y)
     }
 
-    function draw () {
-        const dt = Date.now() - stamp
-        stamp = Date.now()
-        cls()
+    draw () {
+        const dt = Date.now() - this.stamp
+        this.stamp = Date.now()
+        this.cls()
         //1
-        model.comments.forEach((comment) => {
+        this.model.comments.forEach((comment) => {
             if (!comment.isdraw) return
-            if (!comment.ismounted) mountcomment(comment)
+            if (!comment.ismounted) this.mountcomment(comment)
 
-            if (comment.line < lines) {
-                drawcomment(comment)
+            if (comment.line < this.lines) {
+                this.drawcomment(comment)
                 comment.update(dt)
             }
         })
         //2
-        model.comments.forEach((comment) => {
+        this.model.comments.forEach((comment) => {
             if (!comment.isdraw) return
-            if (!comment.ismounted) mountcomment(comment)
+            if (!comment.ismounted) this.mountcomment(comment)
 
-            if (comment.line >= lines) {
-                drawcomment(comment)
+            if (comment.line >= this.lines) {
+                this.drawcomment(comment)
                 comment.update(dt)
             }
         })
 
-        requestAnimationFrame(draw)
+        requestAnimationFrame(this.draw.bind(this))
     }
 }

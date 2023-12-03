@@ -1,26 +1,31 @@
-export function Comment(text) {
-    this.isdraw = true // 描画するか？
-    this.ismounted = false // 描画されているか？
-    this.life = undefined
-    this.speed = undefined
-    this.wait = undefined //ms
-    this.width = undefined
-    this.x = undefined
-    this.y = undefined
-    this.line = undefined
+export class Comment {
+    isdraw = true
+    ismounted = false
+    life
+    speed
+    wait
+    width
+    x
+    y
+    line
+    color
+    position
+    size
+    text
 
-    const { commands, textbody } = parsecommand(text)
+    constructor(text) {
+        const {commands, textbody} = Comment.parsecommand(text)
+        this.color = commands.color || "rgba(255,255,255,0.9)"
+        this.position = commands.position || "naka" // "naka"|"ue"|"shita"
+        this.size = commands.size || "default"
+        this.text = textbody
+    }
 
-    this.color = commands.color || "rgba(255,255,255,0.9)"
-    this.position = commands.position || "naka" // "naka"|"ue"|"shita"
-    this.size = commands.size || "default"
-    this.text = textbody
-    
-    this.pleasewait = function(time) {
+    pleasewait(time) {
         this.wait = time
     }
 
-    this.mount = function({ x, y, line, life, width, speed }) {
+    mount({x, y, line, life, width, speed}) {
         this.isdraw = true
         this.ismounted = true
         this.life = life
@@ -31,7 +36,7 @@ export function Comment(text) {
         this.line = line
     }
 
-    this.unmount = function() {
+    unmount() {
         this.isdraw = false
         this.ismounted = false
         this.wait = undefined
@@ -40,7 +45,7 @@ export function Comment(text) {
         this.line = undefined
     }
 
-    this.update = function(dt) {
+    update(dt) {
         // 座標
         switch (this.position) {
             case "naka": {
@@ -59,7 +64,7 @@ export function Comment(text) {
         if (this.life < 0) this.unmount()
     }
 
-    function parsecommand(text) {
+    static parsecommand(text) {
         const m = text.match("^[@＠](.*)[\\s]+(.*)?")
     
         if (!m) return { commands: { color: undefined }, textbody: text }
