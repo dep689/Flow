@@ -1,8 +1,8 @@
 import { Handlers } from "$fresh/server.ts"
 import Twicas from "../../myModules/twicas.js"
 
-const CLIENT_ID = Deno.env.get("CLIENT_ID")
-const CLIENT_SECRET = Deno.env.get("CLIENT_SECRET")
+const CLIENT_ID = Deno.env.get("TWICAS_CLIENT_ID")
+const CLIENT_SECRET = Deno.env.get("TWICAS_CLIENT_SECRET")
 const twicas = new Twicas(CLIENT_ID, CLIENT_SECRET)
 
 export const handler: Handlers = {
