@@ -3,7 +3,7 @@
 
 ## Usage
 
-初めに `twicaskey.json` の `CLIENT_ID` と `CLIENT_SECRET` を設定します．
+初めに `.env` の `CLIENT_ID` と `CLIENT_SECRET` を設定します．
 キーは https://twitcasting.tv/developer.php で取得できます．
 
 
