@@ -17,13 +17,12 @@ let counter = 0
 
 setInterval(async () => {
     counter += 1
-    const { comments, error } = await fetchLiveComments(user_id, { slice_id })
+    const { comments, error } = await fetchLiveComments(user_id, { slice_id, order: "asc" })
     if (error) return 
     if (comments.length > 0) slice_id = comments[0].id
     if (counter === 1) return
 
-    // 古いものから順に追加
-    comments.reverse().forEach(comment => {
+    comments.forEach(comment => {
         controller.pushcomment(comment.message)
     })
 }, refleshtime)
@@ -32,8 +31,11 @@ controller.start()
 
 
 async function fetchLiveComments (user_id, options) {
-    const { slice_id } = options
+    const { slice_id, order="desc" } = options
     const res = await fetch(`/api/comments?user_id=${user_id}&slice_id=${slice_id}`)
     const json = await res.json()
+    if (order == "asc") {
+        json.comments = json.comments.reverse()
+    }
     return json
 }
