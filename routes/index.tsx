@@ -8,7 +8,7 @@ export default function Home() {
         <link rel="stylesheet" href="/style.css" />
       </Head>
 
-      <canvas id="flow" height="720px" width="1280px" style="height: 360px; width: 640px;"></canvas>
+      <canvas id="flow" height="1080px" width="1920px" style="max-width: 100%;"></canvas>
 
       <script src="/main.js" type="module"></script>
     </>
