@@ -10,7 +10,7 @@ export default function Home() {
 
       <canvas id="flow" height="1080px" width="1920px" style="max-width: 100%;"></canvas>
 
-      <script src="/main.js" type="module"></script>
+      <script src="main.js" type="module"></script>
     </>
   );
 }
